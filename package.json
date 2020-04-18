@@ -1,0 +1,58 @@
+{
+    "name": "theycanuse",
+    "version": "0.0.1",
+    "description": "Scan your code to see what browsers support it. This is basically the inverse of caniuse.com but based on its data.",
+    "main": "dist/index.js",
+    "module": "dist/theycanuse.esm.js",
+    "typings": "dist/index.d.ts",
+    "files": [
+        "dist",
+        "src"
+    ],
+    "repository": "https://github.com/jneuendorf/theycanuse.git",
+    "author": "Jim Neuendorf <jim.neuendorf@gmx.de>",
+    "license": "MIT",
+    "engines": {
+        "node": ">=10"
+    },
+    "scripts": {
+        "start": "tsdx watch",
+        "build": "tsdx build",
+        "test": "tsdx test",
+        "lint": "eslint . --ext .ts,.js",
+        "lint2": "tsdx lint",
+        "prepare": "tsdx build"
+    },
+    "dependencies": {
+        "@babel/parser": "^7.9.4",
+        "@types/fs-extra": "^8.1.0",
+        "@types/semver": "^7.1.0",
+        "caniuse-db": "^1.0.30001040",
+        "fs-extra": "^9.0.0",
+        "glob": "^7.1.6",
+        "mdn-browser-compat-data": "^1.0.17",
+        "semver": "^7.2.2",
+        "ts-is-present": "^1.1.1"
+    },
+    "devDependencies": {
+        "@typescript-eslint/eslint-plugin": "^2.28.0",
+        "@typescript-eslint/parser": "^2.28.0",
+        "eslint": "^6.8.0",
+        "husky": "^4.2.5",
+        "tsdx": "^0.13.2",
+        "tslib": "^1.11.1",
+        "typescript": "^3.8.3"
+    },
+    "husky": {
+        "hooks": {
+            "pre-commit": "yarn lint"
+        }
+    },
+    "prettier": {
+        "bracketSpacing": false,
+        "printWidth": 80,
+        "semi": false,
+        "singleQuote": true,
+        "trailingComma": "all"
+    }
+}

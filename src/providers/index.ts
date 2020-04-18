@@ -1,0 +1,1 @@
+export {CaniuseProvider} from './caniuse'

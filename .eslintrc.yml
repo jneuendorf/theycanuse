@@ -1,0 +1,28 @@
+---
+root: true
+parser: "@typescript-eslint/parser"
+plugins:
+    - "@typescript-eslint"
+extends:
+    - "eslint:recommended"
+    - "plugin:@typescript-eslint/eslint-recommended"
+    - "plugin:@typescript-eslint/recommended"
+rules:
+    "@typescript-eslint/member-delimiter-style": off
+    # "@typescript-eslint/member-delimiter-style":
+    #     - error
+    #     -
+    #         multiline:
+    #             delimiter: comma
+    #             requireLast: true
+    #         singleLine:
+    #             delimiter: comma
+    #             requiresLast: false
+    #         overrides:
+    #             interface:
+    #                 multiline:
+    #                     delimiter: none
+    "@typescript-eslint/no-unused-vars":
+        - error
+        -
+            args: none
