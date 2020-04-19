@@ -4,12 +4,12 @@ import * as semver from 'semver'
 
 import {
     NormalizedData,
-    Provider,
     BrowserSupport,
     BrowserSupportEntries,
     BrowserSupportEntry,
     VersionRanges,
-} from './_base'
+} from './types'
+import {AbstractProvider} from './abstract'
 import {isSupported} from '../support-types'
 
 type Stats = {[key: string]: Versions}
@@ -25,7 +25,7 @@ function isParseableSemVer(
 Loading the cache file takes approximately 1%
 compared to loading and processing 'caniuse-db'.
 */
-export class CaniuseProvider extends Provider {
+export class CaniuseProvider extends AbstractProvider {
     constructor() {
         super('caniuse', caniusePkg.version)
     }

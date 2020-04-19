@@ -1,26 +1,10 @@
 import fs from 'fs-extra'
 import path from 'path'
 
-
-/*
-{
-    'arrow-function': {
-        'ie': ['8.0.0 - 10.4.3', '>= 12'],
-    },
-}
-*/
-export type NormalizedData = {
-    [feature: string]: BrowserSupport,
-}
-export type BrowserSupport = {
-    [browser: string]: VersionRanges,
-}
-export type BrowserSupportEntries = Array<BrowserSupportEntry>
-export type BrowserSupportEntry = [string, VersionRanges]
-export type VersionRanges = Array<string>
+import {NormalizedData} from './types'
 
 
-export abstract class Provider {
+export abstract class AbstractProvider {
     // TODO: Waiting for prettier@2 in tsdx in order to use private fields.
     cacheFile: string
 
@@ -32,18 +16,19 @@ export abstract class Provider {
 
     async getData(): Promise<NormalizedData> {
         let data: NormalizedData
-        if (fs.existsSync(this.cacheFile)) {
-            data = JSON.parse(fs.readFileSync(this.cacheFile, 'utf8'))
+        if (await fs.pathExists(this.cacheFile)) {
+            const fileContents = await fs.readFile(this.cacheFile, 'utf8')
+            data = JSON.parse(fileContents)
         }
         else {
             data = await this.normalizedData()
-            this.cache(data)
+            await this.cache(data)
         }
         return data
     }
 
     private async cache(data: NormalizedData): Promise<void> {
-        if (!fs.existsSync(this.cacheFile)) {
+        if (!(await fs.pathExists(this.cacheFile))) {
             await fs.ensureFile(this.cacheFile)
             await fs.writeJson(this.cacheFile, data)
         }
