@@ -8,6 +8,8 @@ extends:
     - "plugin:@typescript-eslint/eslint-recommended"
     - "plugin:@typescript-eslint/recommended"
 rules:
+    object-curly-spacing: [error, always]
+    array-bracket-spacing: [error, never]
     "@typescript-eslint/member-delimiter-style": off
     # "@typescript-eslint/member-delimiter-style":
     #     - error

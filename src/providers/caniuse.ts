@@ -1,5 +1,5 @@
 import caniusePkg from 'caniuse-db/package.json'
-import {SemVer} from 'semver'
+import { SemVer } from 'semver'
 import * as semver from 'semver'
 
 import {
@@ -9,11 +9,11 @@ import {
     BrowserSupportEntry,
     VersionRanges,
 } from './types'
-import {AbstractProvider} from './abstract'
-import {isSupported} from '../support-types'
+import { AbstractProvider } from './abstract'
+import { isSupported } from '../support-types'
 
-type Stats = {[key: string]: Versions}
-type Versions = {[key: string]: string}
+type Stats = { [key: string]: Versions }
+type Versions = { [key: string]: string }
 
 function isParseableSemVer(
     entry: [SemVer | null, string],
@@ -34,41 +34,41 @@ export class CaniuseProvider extends AbstractProvider {
         const caniuse = await import('caniuse-db/data.json')
         const data = (
             Object.entries(caniuse.data)
-            .map(([feature, data]): [string, BrowserSupport] => {
-                const stats: Stats = data.stats
-                const browserSupportEntries: BrowserSupportEntries = (
-                    Object.entries(stats)
-                    .map((
-                        [browser, versions]: [string, Versions]
-                    ): BrowserSupportEntry => {
-                        const relevantVersions: Array<[SemVer, string]> = (
-                            Object.entries(versions)
-                            // Parse semantic version string and
-                            // remove status annotations, e.g. 'a #1 => 'a'
-                            .map(
-                                ([version, support]): [SemVer | null, string] => [
-                                semver.coerce(version),
-                                support.charAt(0),
-                            ])
-                            // Filter unparseable versions.
-                            .filter(isParseableSemVer)
-                        )
-                        const sortedVersions = relevantVersions.sort(
-                            (
-                                [v1]: [SemVer, string],
-                                [v2]: [SemVer, string],
-                            ) => this.compareVersions(v1, v2),
-                        )
+                .map(([feature, data]): [string, BrowserSupport] => {
+                    const stats: Stats = data.stats
+                    const browserSupportEntries: BrowserSupportEntries = (
+                        Object.entries(stats)
+                            .map((
+                                [browser, versions]: [string, Versions]
+                            ): BrowserSupportEntry => {
+                                const relevantVersions: Array<[SemVer, string]> = (
+                                    Object.entries(versions)
+                                        // Parse semantic version string and
+                                        // remove status annotations, e.g. 'a #1 => 'a'
+                                        .map(
+                                            ([version, support]): [SemVer | null, string] => [
+                                                semver.coerce(version),
+                                                support.charAt(0),
+                                            ])
+                                        // Filter unparseable versions.
+                                        .filter(isParseableSemVer)
+                                )
+                                const sortedVersions = relevantVersions.sort(
+                                    (
+                                        [v1]: [SemVer, string],
+                                        [v2]: [SemVer, string],
+                                    ) => this.compareVersions(v1, v2),
+                                )
 
-                        return [
-                            browser,
-                            this.getSupportingVersionRanges(sortedVersions),
-                        ]
-                    })
-                )
+                                return [
+                                    browser,
+                                    this.getSupportingVersionRanges(sortedVersions),
+                                ]
+                            })
+                    )
 
-                return [feature, Object.fromEntries(browserSupportEntries)]
-            })
+                    return [feature, Object.fromEntries(browserSupportEntries)]
+                })
         )
         return Object.fromEntries(data)
     }
@@ -101,12 +101,12 @@ export class CaniuseProvider extends AbstractProvider {
                 j++
             }
 
-            const [{version: minVersion}] = sortedVersions[i]
+            const [{ version: minVersion }] = sortedVersions[i]
             if (i === j) {
                 supportingVersionRanges.push(minVersion)
             }
             else {
-                const [{version: maxVersion}] = sortedVersions[j]
+                const [{ version: maxVersion }] = sortedVersions[j]
                 // maxVersion is the last available version, thus we don't use an upper version bound.
                 // Example:
                 //  Versions = [9: 'n', 10: 'y', 11: 'y']

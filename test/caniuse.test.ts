@@ -1,4 +1,4 @@
-import {CaniuseProvider} from '../src/providers/caniuse'
+import { CaniuseProvider } from '../src/providers/caniuse'
 
 
 describe('CaniuseProvider', () => {

@@ -1,12 +1,12 @@
 // @flow
 
-export const RawSupportTypes: {[key: string]: string} = {
+export const RawSupportTypes: { [key: string]: string } = {
     u: 'UNKNOWN',
     n: 'NO',
     a: 'PARTIAL',
     y: 'YES',
 }
-export const SupportTypes: {[key: string]: number} = {
+export const SupportTypes: { [key: string]: number } = {
     UNKNOWN: 0,
     NO: 1,
     PARTIAL: 2,

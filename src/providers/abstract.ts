@@ -1,7 +1,7 @@
 import fs from 'fs-extra'
 import path from 'path'
 
-import {NormalizedData} from './types'
+import { NormalizedData } from './types'
 
 
 export abstract class AbstractProvider {

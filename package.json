@@ -20,11 +20,12 @@
         "build": "tsdx build",
         "test": "tsdx test",
         "lint": "eslint . --ext .ts,.js",
-        "lint2": "tsdx lint",
+        "fixlint": "tsfmt -r && eslint . --ext .ts,.js",
         "prepare": "tsdx build"
     },
     "dependencies": {
         "@babel/parser": "^7.9.4",
+        "@babel/types": "^7.9.5",
         "@types/fs-extra": "^8.1.0",
         "@types/semver": "^7.1.0",
         "caniuse-db": "^1.0.30001040",
@@ -41,7 +42,8 @@
         "husky": "^4.2.5",
         "tsdx": "^0.13.2",
         "tslib": "^1.11.1",
-        "typescript": "^3.8.3"
+        "typescript": "^3.8.3",
+        "typescript-formatter": "^7.2.2"
     },
     "husky": {
         "hooks": {

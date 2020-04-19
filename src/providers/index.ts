@@ -1,1 +1,1 @@
-export {CaniuseProvider} from './caniuse'
+export { CaniuseProvider } from './caniuse'
