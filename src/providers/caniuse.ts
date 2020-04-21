@@ -8,7 +8,7 @@ import {
     BrowserSupportEntries,
     BrowserSupportEntry,
     VersionRanges,
-} from './types'
+} from '../types-data'
 import { AbstractProvider } from './abstract'
 import { isSupported } from '../support-types'
 

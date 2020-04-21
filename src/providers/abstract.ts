@@ -1,14 +1,15 @@
 import fs from 'fs-extra'
 import path from 'path'
 
-import { NormalizedData } from './types'
+import { NormalizedData } from '../types-data'
 
 
 export abstract class AbstractProvider {
-    // TODO: Waiting for prettier@2 in tsdx in order to use private fields.
-    cacheFile: string
+    readonly name: string
+    private cacheFile: string
 
     constructor(name: string, version: string) {
+        this.name = name
         this.cacheFile = path.join(__dirname, name, `${version}.json`)
     }
 
