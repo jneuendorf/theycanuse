@@ -6,7 +6,7 @@ import { AbstractProvider as Provider } from '../providers'
 import { BrowserSupport, NormalizedData } from '../types-data'
 
 
-type Features = {[feature: string]: {[provider: string]: BrowserSupport}}
+export type Features = {[feature: string]: {[provider: string]: BrowserSupport}}
 export type Recognizer<Node, NodePath> = (node: Node, nodePath: NodePath) => boolean
 
 
@@ -62,6 +62,8 @@ export abstract class AbstractAnalyzer<Node, NodePath> {
 
     abstract getRecognizer(feature: string): Recognizer<Node, NodePath> | void
 
+    // Feature recognition
+
     // abstract recognizedFeature(feature: string, ast: Node, nodePath: NodePath): boolean
     recognizedFeature(feature: string, node: Node, nodePath: NodePath): boolean {
         const recognizer = this.getRecognizer(camelCase(feature))
@@ -79,10 +81,7 @@ export abstract class AbstractAnalyzer<Node, NodePath> {
         return this.features
     }
 
-
-    // Private
-
-    private async reset(): void {
+    private async reset(): Promise<void> {
         this.features = {}
         if (!this.isDataLoaded) {
             this.normalizedDatas = await this.getData()

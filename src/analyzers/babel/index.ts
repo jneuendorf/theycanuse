@@ -10,12 +10,20 @@ import * as featureRecognizers from './feature-recognizers'
 export type BabelRecognizer = Recognizer<Node, NodePath>
 
 // Type assertion
-const typedFeatureRecognizers = (featureRecognizers as {[feature: string]: BabelRecognizer})
+const typedFeatureRecognizers = (
+    featureRecognizers as {[feature: string]: BabelRecognizer}
+)
 
 
 export class BabelAnalyzer extends AbstractAnalyzer<Node, NodePath> {
     parse(code: string): Node {
-        return parse(code)
+        // TODO: Make options configurable from command line
+        return parse(code, {
+            sourceType: "unambiguous",
+            plugins: [
+                "jsx",
+            ],
+        })
     }
 
     traverse(ast: Node): void {
