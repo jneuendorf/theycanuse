@@ -95,6 +95,11 @@ export class CaniuseProvider extends AbstractProvider {
             while (i < n - 1 && !isSupported(sortedVersions[i][1])) {
                 i++
             }
+            // No version has support.
+            if (!isSupported(sortedVersions[i][1])) {
+                break
+            }
+
             j = i
             // Find last item with supporting version.
             while (j < n - 1 && isSupported(sortedVersions[j][1])) {
