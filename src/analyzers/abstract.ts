@@ -6,11 +6,25 @@ import { AbstractProvider as Provider } from '../providers'
 import { BrowserSupport, NormalizedData } from '../types-data'
 
 
+/*
+Generic subset of node_modules/@types/babel__traverse/index.d.ts > NodePath
+
+ESLint: https://github.com/eslint/eslint/blob/33efd71d7c3496b4b9cbfe006280527064940826/lib/linter/linter.js#L851-L926
+*/
+export interface NodeMetaData<Node, NodePath, Scope> {
+        node: Node
+        nodePath: NodePath
+        scope: Scope
+        parent: Node
+        parentPath: NodePath
+        opts?: object
+}
+
 export type Features = {[feature: string]: {[provider: string]: BrowserSupport}}
-export type Recognizer<Node, NodePath> = (node: Node, nodePath: NodePath) => boolean
+export type Recognizer<NodeMetaData> = (metaData: NodeMetaData) => boolean
 
 
-export abstract class AbstractAnalyzer<Node, NodePath> {
+export abstract class AbstractAnalyzer<Node, NodePath, Scope> {
     private dataProviders: Provider[]
     private normalizedDatas: NormalizedData[] = []
     private isDataLoaded = false
@@ -45,12 +59,12 @@ export abstract class AbstractAnalyzer<Node, NodePath> {
     Pre-implemented helper method that can be called when the tree traversal
     visites a node.
     */
-    visit(node: Node, nodePath: NodePath): void {
+    visit(metaData: NodeMetaData<Node, NodePath, Scope>): void {
         this.normalizedDatas.forEach((normalizedData, index) => {
             const provider = this.dataProviders[index]
             const entries = Object.entries(normalizedData)
             for (const [feature, browserSupport] of entries) {
-                if (this.recognizedFeature(feature, node, nodePath)) {
+                if (this.recognizedFeature(feature, metaData)) {
                     if (!this.features[feature]) {
                         this.features[feature] = {}
                     }
@@ -60,16 +74,16 @@ export abstract class AbstractAnalyzer<Node, NodePath> {
         })
     }
 
-    abstract getRecognizer(feature: string): Recognizer<Node, NodePath> | void
+    abstract getRecognizer(feature: string): Recognizer<NodeMetaData<Node, NodePath, Scope>> | void
 
     // Feature recognition
 
-    // abstract recognizedFeature(feature: string, ast: Node, nodePath: NodePath): boolean
-    recognizedFeature(feature: string, node: Node, nodePath: NodePath): boolean {
+    // recognizedFeature(feature: string, node: Node, nodePath: NodePath): boolean {
+    recognizedFeature(feature: string, metaData: NodeMetaData<Node, NodePath, Scope>): boolean {
         const recognizer = this.getRecognizer(camelCase(feature))
         return (
             recognizer
-            ? recognizer(node, nodePath)
+            ? recognizer(metaData)
             : false
         )
     }
