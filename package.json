@@ -21,7 +21,7 @@
         "test": "tsdx test",
         "lint": "eslint . --ext .ts,.js",
         "fixlint": "tsfmt -r && eslint . --ext .ts,.js",
-        "gen-mass-imports": "node src/analyzers/babel/feature-recognizers/_generate-index.js",
+        "gen-mass-imports": "node src/analyzers/babel/feature-detectors/_generate-index.js",
         "prepare": "tsdx build"
     },
     "dependencies": {

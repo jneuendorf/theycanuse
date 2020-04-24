@@ -21,7 +21,7 @@ export interface NodeMetaData<Node, NodePath, Scope> {
 }
 
 export type Features = {[feature: string]: {[provider: string]: BrowserSupport}}
-export type Recognizer<NodeMetaData> = (metaData: NodeMetaData) => boolean
+export type Detector<NodeMetaData> = (metaData: NodeMetaData) => boolean
 
 
 export abstract class AbstractAnalyzer<Node, NodePath, Scope> {
@@ -64,7 +64,7 @@ export abstract class AbstractAnalyzer<Node, NodePath, Scope> {
             const provider = this.dataProviders[index]
             const entries = Object.entries(normalizedData)
             for (const [feature, browserSupport] of entries) {
-                if (this.recognizedFeature(feature, metaData)) {
+                if (this.detectedFeature(feature, metaData)) {
                     if (!this.features[feature]) {
                         this.features[feature] = {}
                     }
@@ -74,16 +74,16 @@ export abstract class AbstractAnalyzer<Node, NodePath, Scope> {
         })
     }
 
-    abstract getRecognizer(feature: string): Recognizer<NodeMetaData<Node, NodePath, Scope>> | void
+    abstract getDetector(feature: string): Detector<NodeMetaData<Node, NodePath, Scope>> | void
 
     // Feature recognition
 
-    // recognizedFeature(feature: string, node: Node, nodePath: NodePath): boolean {
-    recognizedFeature(feature: string, metaData: NodeMetaData<Node, NodePath, Scope>): boolean {
-        const recognizer = this.getRecognizer(camelCase(feature))
+    // detectedFeature(feature: string, node: Node, nodePath: NodePath): boolean {
+    detectedFeature(feature: string, metaData: NodeMetaData<Node, NodePath, Scope>): boolean {
+        const detector = this.getDetector(camelCase(feature))
         return (
-            recognizer
-            ? recognizer(metaData)
+            detector
+            ? detector(metaData)
             : false
         )
     }

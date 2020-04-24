@@ -3,15 +3,15 @@ import { Node } from '@babel/types'
 import { parse } from '@babel/parser'
 import traverse, { Visitor, NodePath, Scope } from '@babel/traverse'
 
-import { AbstractAnalyzer, NodeMetaData, Recognizer } from '../abstract'
-import * as featureRecognizers from './feature-recognizers'
+import { AbstractAnalyzer, NodeMetaData, Detector } from '../abstract'
+import * as featureDetectors from './feature-detectors'
 
 
-export type BabelRecognizer = Recognizer<NodeMetaData<Node, NodePath, Scope>>
+export type BabelDetector = Detector<NodeMetaData<Node, NodePath, Scope>>
 
 // Type assertion
-const typedFeatureRecognizers = (
-    featureRecognizers as {[feature: string]: BabelRecognizer}
+const typedFeatureDetectors = (
+    featureDetectors as {[feature: string]: BabelDetector}
 )
 
 
@@ -44,7 +44,7 @@ export class BabelAnalyzer extends AbstractAnalyzer<Node, NodePath, Scope> {
         traverse(ast, visitor)
     }
 
-    getRecognizer(feature: string): BabelRecognizer | void {
-        return typedFeatureRecognizers[feature]
+    getDetector(feature: string): BabelDetector | void {
+        return typedFeatureDetectors[feature]
     }
 }

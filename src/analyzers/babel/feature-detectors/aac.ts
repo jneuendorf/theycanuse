@@ -1,9 +1,9 @@
 import * as t from '@babel/types'
 
-import { BabelRecognizer } from '../index'
+import { BabelDetector } from '../index'
 
 
-export const aac: BabelRecognizer = function({ node, nodePath }): boolean {
+export const aac: BabelDetector = function({ node, nodePath }): boolean {
     if (t.isStringLiteral(node)) {
         const { parent, parentPath } = nodePath
 
