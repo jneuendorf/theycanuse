@@ -61,7 +61,7 @@ describe('BabelAnalyzer', () => {
             'async-iterations-and-generators'
         )
         await expectCodeUsesFeature(
-            `async function* asyncGenerator() {
+            `const asyncGenerator2 = async function* () {
                 let i = 0;
                 while (i < 3) {
                     yield i++;
@@ -69,30 +69,33 @@ describe('BabelAnalyzer', () => {
             }`,
             'async-iterations-and-generators'
         )
-
-
-        // const functionDeclaration = await analyze(
-        //     `async function* asyncGenerator() {
-        //         let i = 0;
-        //         while (i < 3) {
-        //             yield i++;
-        //         }
-        //     }`
-        // )
-        // const functionDeclaration = await analyze(
-        //     `const asyncGenerator2 = async function* () {
-        //         let i = 0;
-        //         while (i < 3) {
-        //             yield i++;
-        //         }
-        //     }`
-        // )
-        // console.log(functionDeclaration)
-        // expect(functionDeclaration['async-functions']).not.toBeUndefined()
-        // const functionExpression = await analyze(`g = async function () {}`)
-        // expect(functionExpression['async-functions']).not.toBeUndefined()
-        // const arrowFunctionExpression = await analyze(`const h = async () => {}`)
-        // expect(arrowFunctionExpression['async-functions']).not.toBeUndefined()
+        await expectCodeUsesFeature(
+            `const asyncIterable = {
+                [Symbol.asyncIterator]() {
+                    return {
+                        i: 0,
+                        next() {
+                            if (this.i < 3) {
+                                return Promise.resolve({
+                                    value: this.i++,
+                                    done: false
+                                });
+                            }
+                            return Promise.resolve({done: true});
+                        }
+                    };
+                }
+            };`,
+            'async-iterations-and-generators'
+        )
+        await expectCodeUsesFeature(
+            `(async function() {
+                for await (let num of asyncIterable) {
+                    console.log(num);
+                }
+            })();`,
+            'async-iterations-and-generators'
+        )
     })
 
     test('const', async () => {

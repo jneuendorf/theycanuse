@@ -52,12 +52,12 @@ export const _asyncIterationsAndGenerators: BabelDetector = function({ node }): 
 
     /*
     (async function() {
-        for await(let num of asyncIterable) {
+        for await (let num of asyncIterable) {
             console.log(num);
         }
     })();
     (async function() {
-        for await(let num of asyncGenerator()) {
+        for await (let num of asyncGenerator()) {
             console.log(num);
         }
     })();
