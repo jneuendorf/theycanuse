@@ -24,5 +24,5 @@ export const abortcontroller: BabelDetector = function({ node }): boolean {
     //         }
     //     }
     // }
-    return false
+    return node && false
 }

@@ -23,15 +23,26 @@ export interface NodeMetaData<Node, NodePath, Scope> {
 export type Features = {[feature: string]: {[provider: string]: BrowserSupport}}
 export type Detector<NodeMetaData> = (metaData: NodeMetaData) => boolean
 
+interface Has<T> {
+    has(item: T): boolean
+}
+// type UseFeature = (feature: string) => boolean
+// const alwaysUseFeature: UseFeature = (_feature: string) => true
+
 
 export abstract class AbstractAnalyzer<Node, NodePath, Scope> {
     private dataProviders: Provider[]
+    // private useFeature: UseFeature
+    private usedFeatures?: Has<string>
     private normalizedDatas: NormalizedData[] = []
     private isDataLoaded = false
     private features: Features = {}
 
-    constructor(dataProviders: Provider[]) {
+    // constructor(dataProviders: Provider[], useFeature?: UseFeature) {
+    constructor(dataProviders: Provider[], usedFeatures?: Has<string>) {
         this.dataProviders = dataProviders
+        // this.useFeature = useFeature || alwaysUseFeature
+        this.usedFeatures = usedFeatures
     }
 
     async getData(): Promise<NormalizedData[]> {
@@ -64,21 +75,32 @@ export abstract class AbstractAnalyzer<Node, NodePath, Scope> {
             const provider = this.dataProviders[index]
             const entries = Object.entries(normalizedData)
             for (const [feature, browserSupport] of entries) {
-                if (this.detectedFeature(feature, metaData)) {
-                    if (!this.features[feature]) {
-                        this.features[feature] = {}
+                if (this.useFeature(feature)) {
+                    if (this.detectedFeature(feature, metaData)) {
+                        if (!this.features[feature]) {
+                            this.features[feature] = {}
+                        }
+                        this.features[feature][provider.name] = browserSupport
                     }
-                    this.features[feature][provider.name] = browserSupport
                 }
             }
         })
     }
 
+    private useFeature(feature: string): boolean {
+        if (!this.usedFeatures) {
+            return true
+        }
+        else {
+            return this.usedFeatures.has(feature)
+        }
+    }
+
+
+    // Feature detection
+
     abstract getDetector(feature: string): Detector<NodeMetaData<Node, NodePath, Scope>> | void
 
-    // Feature recognition
-
-    // detectedFeature(feature: string, node: Node, nodePath: NodePath): boolean {
     detectedFeature(feature: string, metaData: NodeMetaData<Node, NodePath, Scope>): boolean {
         const detector = this.getDetector(camelCase(feature))
         return (

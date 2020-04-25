@@ -1,3 +1,6 @@
+import path from 'path'
+
+import fs from 'fs-extra'
 import caniusePkg from 'caniuse-db/package.json'
 import { SemVer } from 'semver'
 import * as semver from 'semver'
@@ -31,11 +34,19 @@ export class CaniuseProvider extends AbstractProvider {
     }
 
     async normalizedData(): Promise<NormalizedData> {
-        const caniuse = await import('caniuse-db/data.json')
+        const jsonFiles = await fs.readdir('node_modules/caniuse-db/features-json')
+        const caniuseData = await Promise.all(
+            jsonFiles.map(async (jsonFile): Promise<[string, Stats]> => {
+                const data: {stats: Stats} = await import(`caniuse-db/features-json/${jsonFile}`)
+                return [path.basename(jsonFile, '.json'), data.stats]
+            })
+        )
+        // const caniuse = await import('caniuse-db/data.json')
         const data = (
-            Object.entries(caniuse.data)
-                .map(([feature, data]): [string, BrowserSupport] => {
-                    const stats: Stats = data.stats
+            // Object.entries(caniuse.data)
+            caniuseData
+                .map(([feature, stats]): [string, BrowserSupport] => {
+                    // const stats: Stats = data.stats
                     const browserSupportEntries: BrowserSupportEntries = (
                         Object.entries(stats)
                             .map((
