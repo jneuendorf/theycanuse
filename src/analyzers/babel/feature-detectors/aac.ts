@@ -3,7 +3,7 @@ import * as t from '@babel/types'
 import { BabelDetector } from '../index'
 
 
-export const aac: BabelDetector = function({ node, nodePath }): boolean {
+export const _aac: BabelDetector = function({ node, nodePath }): boolean {
     if (t.isStringLiteral(node)) {
         const { parent, parentPath } = nodePath
 

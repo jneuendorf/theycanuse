@@ -3,7 +3,7 @@
 import { BabelDetector } from '../index'
 
 
-export const abortcontroller: BabelDetector = function({ node }): boolean {
+export const _abortcontroller: BabelDetector = function({ node }): boolean {
     // const a = fetch
     // TODO: check for non-member 'new AbortController()')
 

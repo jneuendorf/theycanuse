@@ -20,7 +20,7 @@ fs.readdir(__dirname, 'utf8', async (err, files) => {
         lines.push(
             `${stats.size === 0 ? '// ' : ''}`
             + `export `
-            + `{ ${camelCase(filename)} } `
+            + `{ _${camelCase(filename)} } `
             + `from './${filename}'`
         )
     }

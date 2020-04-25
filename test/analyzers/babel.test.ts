@@ -94,4 +94,11 @@ describe('BabelAnalyzer', () => {
         // const arrowFunctionExpression = await analyze(`const h = async () => {}`)
         // expect(arrowFunctionExpression['async-functions']).not.toBeUndefined()
     })
+
+    test('const', async () => {
+        await expectCodeUsesFeature(
+            `const a = 1`,
+            'const'
+        )
+    })
 })

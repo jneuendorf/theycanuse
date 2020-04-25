@@ -3,7 +3,7 @@ import * as t from '@babel/types'
 import { BabelDetector } from '../index'
 
 
-export const asyncIterationsAndGenerators: BabelDetector = function({ node }): boolean {
+export const _asyncIterationsAndGenerators: BabelDetector = function({ node }): boolean {
     /*
     async function* asyncGenerator() {
         let i = 0;

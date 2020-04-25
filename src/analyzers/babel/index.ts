@@ -45,6 +45,6 @@ export class BabelAnalyzer extends AbstractAnalyzer<Node, NodePath, Scope> {
     }
 
     getDetector(feature: string): BabelDetector | void {
-        return typedFeatureDetectors[feature]
+        return typedFeatureDetectors[`_${feature}`]
     }
 }
