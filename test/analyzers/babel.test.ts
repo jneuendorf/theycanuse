@@ -104,4 +104,15 @@ describe('BabelAnalyzer', () => {
             'const'
         )
     })
+
+    test('es6-class', async () => {
+        await expectCodeUsesFeature(
+            `class A {}`,
+            'es6-class'
+        )
+        await expectCodeUsesFeature(
+            `const a = class {}`,
+            'es6-class'
+        )
+    })
 })
