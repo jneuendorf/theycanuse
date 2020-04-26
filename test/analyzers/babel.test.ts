@@ -136,4 +136,11 @@ describe('BabelAnalyzer', () => {
             'es6-generators'
         )
     })
+
+    test('es6-module-dynamic-import', async () => {
+        await expectCodeUsesFeature(
+            `const lib = import('lib')`,
+            'es6-module-dynamic-import'
+        )
+    })
 })
