@@ -143,4 +143,20 @@ describe('BabelAnalyzer', () => {
             'es6-module-dynamic-import'
         )
     })
+
+    test('es6-module', async () => {
+        await expectCodeUsesFeature(
+            `import def, {a} from 'a'`,
+            'es6-module'
+        )
+        await expectCodeUsesFeature(
+            `export default def`,
+            'es6-module'
+        )
+        await expectCodeUsesFeature(
+            `const a = 2
+            export {a}`,
+            'es6-module'
+        )
+    })
 })
