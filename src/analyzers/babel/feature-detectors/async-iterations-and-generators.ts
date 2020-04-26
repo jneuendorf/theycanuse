@@ -19,7 +19,7 @@ export const _asyncIterationsAndGenerators: BabelDetector = function({ node }): 
     }
     */
     if (t.isFunctionDeclaration(node) || t.isFunctionExpression(node)) {
-        return node.generator
+        return node.generator && node.async
     }
 
     /*

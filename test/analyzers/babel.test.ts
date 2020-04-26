@@ -115,4 +115,25 @@ describe('BabelAnalyzer', () => {
             'es6-class'
         )
     })
+
+    test('es6-generators', async () => {
+        await expectCodeUsesFeature(
+            `function* generator() {
+                let i = 0;
+                while (i < 3) {
+                    yield i++;
+                }
+            }`,
+            'es6-generators'
+        )
+        await expectCodeUsesFeature(
+            `const asyncGenerator2 = function* () {
+                let i = 0;
+                while (i < 3) {
+                    yield i++;
+                }
+            }`,
+            'es6-generators'
+        )
+    })
 })
