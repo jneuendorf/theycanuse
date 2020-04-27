@@ -1,11 +1,11 @@
-import { Features } from '../../src/analyzers/abstract'
+import { Features } from '../../src/analyzers/types'
 import { BabelAnalyzer } from '../../src/analyzers/babel'
 import { instances as providers } from '../../src/providers'
 
 
 const babelAnalyzer = new BabelAnalyzer(
     providers,
-    // new Set<string>(['async-iterations-and-generators'])
+    // new Set<string>(['es6-number'])
 )
 
 function analyze(code: string): Promise<Features> {
@@ -158,5 +158,42 @@ describe('BabelAnalyzer', () => {
             export {a}`,
             'es6-module'
         )
+    })
+
+    test('es6-number', async () => {
+        function codeUsesEs6Number(code: string): Promise<void> {
+            return expectCodeUsesFeature(code, 'es6-number')
+        }
+
+        await codeUsesEs6Number(`const a = 0b11`)
+        await codeUsesEs6Number(`const b = 0o7`)
+        // Number
+        await codeUsesEs6Number(`Number.EPSILON`)
+        await codeUsesEs6Number(`Number.isFinite`)
+        await codeUsesEs6Number(`Number.isNaN`)
+        await codeUsesEs6Number(`Number.parseFloat('1.23')`)
+        await codeUsesEs6Number(`Number.parseInt('11')`)
+        await codeUsesEs6Number(`Number.isInteger`)
+        await codeUsesEs6Number(`Number.isSafeInteger`)
+        await codeUsesEs6Number(`Number.MIN_SAFE_INTEGER`)
+        await codeUsesEs6Number(`Number.MAX_SAFE_INTEGER`)
+        // Math
+        await codeUsesEs6Number(`Math.sign`)
+        await codeUsesEs6Number(`Math.trunc`)
+        await codeUsesEs6Number(`Math.cbrt`)
+        await codeUsesEs6Number(`Math.expm1`)
+        await codeUsesEs6Number(`Math.log1p`)
+        await codeUsesEs6Number(`Math.log2`)
+        await codeUsesEs6Number(`Math.log10`)
+        await codeUsesEs6Number(`Math.fround`)
+        await codeUsesEs6Number(`Math.imul`)
+        await codeUsesEs6Number(`Math.clz32`)
+        await codeUsesEs6Number(`Math.sinh`)
+        await codeUsesEs6Number(`Math.cosh`)
+        await codeUsesEs6Number(`Math.tanh`)
+        await codeUsesEs6Number(`Math.asinh`)
+        await codeUsesEs6Number(`Math.acosh`)
+        await codeUsesEs6Number(`Math.atanh`)
+        await codeUsesEs6Number(`Math.hypot`)
     })
 })

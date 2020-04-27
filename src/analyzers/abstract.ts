@@ -3,45 +3,24 @@ import fs from 'fs-extra'
 import { camelCase } from 'change-case'
 
 import { AbstractProvider as Provider } from '../providers'
-import { BrowserSupport, NormalizedData } from '../types-data'
+import { NormalizedData } from '../types/data'
+import { NodeMetaData, Features, Detector } from './types'
 
-
-/*
-Generic subset of node_modules/@types/babel__traverse/index.d.ts > NodePath
-
-ESLint: https://github.com/eslint/eslint/blob/33efd71d7c3496b4b9cbfe006280527064940826/lib/linter/linter.js#L851-L926
-*/
-export interface NodeMetaData<Node, NodePath, Scope> {
-        node: Node
-        nodePath: NodePath
-        scope: Scope
-        parent: Node
-        parentPath: NodePath
-        opts?: object
-}
-
-export type Features = {[feature: string]: {[provider: string]: BrowserSupport}}
-export type Detector<NodeMetaData> = (metaData: NodeMetaData) => boolean
 
 interface Has<T> {
     has(item: T): boolean
 }
-// type UseFeature = (feature: string) => boolean
-// const alwaysUseFeature: UseFeature = (_feature: string) => true
 
 
 export abstract class AbstractAnalyzer<Node, NodePath, Scope> {
     private dataProviders: Provider[]
-    // private useFeature: UseFeature
     private usedFeatures?: Has<string>
     private normalizedDatas: NormalizedData[] = []
     private isDataLoaded = false
     private features: Features = {}
 
-    // constructor(dataProviders: Provider[], useFeature?: UseFeature) {
     constructor(dataProviders: Provider[], usedFeatures?: Has<string>) {
         this.dataProviders = dataProviders
-        // this.useFeature = useFeature || alwaysUseFeature
         this.usedFeatures = usedFeatures
     }
 

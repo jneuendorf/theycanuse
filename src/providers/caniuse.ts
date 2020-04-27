@@ -11,12 +11,14 @@ import {
     BrowserSupportEntries,
     BrowserSupportEntry,
     VersionRanges,
-} from '../types-data'
+} from '../types/data'
 import { AbstractProvider } from './abstract'
 import { isSupported } from '../support-types'
 
+
 type Stats = { [key: string]: Versions }
 type Versions = { [key: string]: string }
+
 
 function isParseableSemVer(
     entry: [SemVer | null, string],

@@ -9,9 +9,10 @@ fs.readdir(__dirname, 'utf8', async (err, files) => {
         throw err
     }
 
-    const typeScriptFiles = files.filter(
-        file => file !== 'index.ts' && path.extname(file) === '.ts'
-    )
+    const typeScriptFiles = files.filter(file => (
+        file !== 'index.ts'
+        && path.extname(file) === '.ts'
+    ))
     const target = path.join(__dirname, 'index.ts')
     const lines = []
     for (const tsFile of typeScriptFiles) {
