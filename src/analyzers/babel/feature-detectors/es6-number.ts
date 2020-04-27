@@ -12,7 +12,7 @@ function isNumericLiteral(node: object | null | undefined, opts?: object | null)
 }
 
 
-export const _es6Number: BabelDetector = function({ node }): boolean {
+export const _es6Number: BabelDetector = function({ node, scope }): boolean {
     /*
     const a = 0b11
     const b = 0o7
@@ -47,7 +47,7 @@ export const _es6Number: BabelDetector = function({ node }): boolean {
         'hypot',
     ]
     return (
-        isAnyMemberOfGlobal(node, 'Number', numberProps)
-        || isAnyMemberOfGlobal(node, 'Math', mathProps)
+        isAnyMemberOfGlobal(node, scope, 'Number', numberProps)
+        || isAnyMemberOfGlobal(node, scope, 'Math', mathProps)
     )
 }

@@ -16,6 +16,10 @@ async function expectCodeUsesFeature(code: string, feature: string): Promise<voi
     const browserSupport = await analyze(code)
     expect(browserSupport[feature]).not.toBeUndefined()
 }
+async function expectNotCodeUsesFeature(code: string, feature: string): Promise<void> {
+    const browserSupport = await analyze(code)
+    expect(browserSupport[feature]).toBeUndefined()
+}
 
 
 
@@ -195,5 +199,22 @@ describe('BabelAnalyzer', () => {
         await codeUsesEs6Number(`Math.acosh`)
         await codeUsesEs6Number(`Math.atanh`)
         await codeUsesEs6Number(`Math.hypot`)
+    })
+
+    test('fetch', async () => {
+        await expectCodeUsesFeature(
+            `fetch('http://my.domain.com')`,
+            'fetch'
+        )
+        await expectCodeUsesFeature(
+            `const get = fetch
+            get('http://my.domain.com')`,
+            'fetch'
+        )
+        await expectNotCodeUsesFeature(
+            `const fetch = () => {}
+            fetch('http://my.domain.com')`,
+            'fetch'
+        )
     })
 })

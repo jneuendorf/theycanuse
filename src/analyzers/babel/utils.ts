@@ -1,11 +1,12 @@
 import * as t from '@babel/types'
 
-import { Node } from './index'
+import { Node, Scope } from './index'
 
 
 export function isAnyMemberOfGlobal(
     node: Node,
-    object: string,
+    scope: Scope,
+    nameOfGlobal: string,
     properties: string[],
 ): boolean {
     if (t.isMemberExpression(node)) {
@@ -13,7 +14,8 @@ export function isAnyMemberOfGlobal(
         // thus the first/most inner member expression
         if (t.isIdentifier(node.object) && t.isIdentifier(node.property)) {
             return (
-                node.object.name === object
+                node.object.name === nameOfGlobal
+                && scope.hasGlobal(node.object.name)
                 && properties.includes(node.property.name)
             )
         }
@@ -24,8 +26,9 @@ export function isAnyMemberOfGlobal(
 
 export function isMemberOfGlobal(
     node: Node,
-    object: string,
+    scope: Scope,
+    nameOfGlobal: string,
     property: string,
 ): boolean {
-    return isAnyMemberOfGlobal(node, object, [property])
+    return isAnyMemberOfGlobal(node, scope, nameOfGlobal, [property])
 }

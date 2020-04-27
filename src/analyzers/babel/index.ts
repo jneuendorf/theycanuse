@@ -32,13 +32,6 @@ export class BabelAnalyzer extends AbstractAnalyzer<Node, NodePath, Scope> {
 
     traverse(ast: Node): void {
         const visitor: Visitor = {
-            // ArrowFunctionExpression: (
-            //     // path: NodePath<t.ArrowFunctionExpression>,
-            //     path,
-            //     // state
-            // ) => {
-            //     this.visit(path.node, path)
-            // },
             enter: (path) => {
                 const metaData = { nodePath: path, ...path }
                 this.visit(metaData)
