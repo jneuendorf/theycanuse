@@ -281,4 +281,11 @@ describe('BabelAnalyzer', () => {
             'fetch'
         )
     })
+
+    test('let', async () => {
+        await expectCodeUsesFeature(
+            `let a = 1`,
+            'let'
+        )
+    })
 })
