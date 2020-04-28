@@ -12,50 +12,42 @@ function analyze(code: string): Promise<Features> {
     return babelAnalyzer.analyzeFeatures(code)
 }
 
-async function expectCodeUsesFeature(code: string, feature: string): Promise<void> {
+async function expectFeatureUsed(code: string, feature: string): Promise<void> {
     const browserSupport = await analyze(code)
     expect(browserSupport[feature]).not.toBeUndefined()
 }
-async function expectNotCodeUsesFeature(code: string, feature: string): Promise<void> {
+async function expectFeatureNotUsed(code: string, feature: string): Promise<void> {
     const browserSupport = await analyze(code)
     expect(browserSupport[feature]).toBeUndefined()
 }
 
 
 
-describe('BabelAnalyzer', () => {
-
-    test('aac', async () => {
-        await expectCodeUsesFeature(
-            `const jsx = <audio controls src="/media/sound.aac"></audio>`,
-            'aac'
-        )
-    })
-
+describe('language features', () => {
     test('arrow-functions', async () => {
-        await expectCodeUsesFeature(
+        await expectFeatureUsed(
             `const f = (a, b) => a + b`,
             'arrow-functions'
         )
     })
 
     test('async-functions', async () => {
-        await expectCodeUsesFeature(
+        await expectFeatureUsed(
             `async function f() {}`,
             'async-functions'
         )
-        await expectCodeUsesFeature(
+        await expectFeatureUsed(
             `g = async function () {}`,
             'async-functions'
         )
-        await expectCodeUsesFeature(
+        await expectFeatureUsed(
             `const h = async () => {}`,
             'async-functions'
         )
     })
 
     test('async-iterations-and-generators', async () => {
-        await expectCodeUsesFeature(
+        await expectFeatureUsed(
             `async function* asyncGenerator() {
                 let i = 0;
                 while (i < 3) {
@@ -64,7 +56,7 @@ describe('BabelAnalyzer', () => {
             }`,
             'async-iterations-and-generators'
         )
-        await expectCodeUsesFeature(
+        await expectFeatureUsed(
             `const asyncGenerator2 = async function* () {
                 let i = 0;
                 while (i < 3) {
@@ -73,7 +65,111 @@ describe('BabelAnalyzer', () => {
             }`,
             'async-iterations-and-generators'
         )
-        await expectCodeUsesFeature(
+        await expectFeatureUsed(
+            `(async function() {
+                for await (let num of asyncIterable) {
+                    console.log(num);
+                }
+            })();`,
+            'async-iterations-and-generators'
+        )
+    })
+
+    test('const', async () => {
+        await expectFeatureUsed(
+            `const a = 1`,
+            'const'
+        )
+    })
+
+    test('es6-class', async () => {
+        await expectFeatureUsed(
+            `class A {}`,
+            'es6-class'
+        )
+        await expectFeatureUsed(
+            `const a = class {}`,
+            'es6-class'
+        )
+    })
+
+    test('es6-generators', async () => {
+        await expectFeatureUsed(
+            `function* generator() {
+                let i = 0;
+                while (i < 3) {
+                    yield i++;
+                }
+            }`,
+            'es6-generators'
+        )
+        await expectFeatureUsed(
+            `const asyncGenerator2 = function* () {
+                let i = 0;
+                while (i < 3) {
+                    yield i++;
+                }
+            }`,
+            'es6-generators'
+        )
+    })
+
+    test('es6-module', async () => {
+        await expectFeatureUsed(
+            `import def, {a} from 'a'`,
+            'es6-module'
+        )
+        await expectFeatureUsed(
+            `export default def`,
+            'es6-module'
+        )
+        await expectFeatureUsed(
+            `const a = 2
+            export {a}`,
+            'es6-module'
+        )
+    })
+
+    test('es6-number', async () => {
+        await expectFeatureUsed(
+            `const a = 0b11`,
+            'es6-number'
+        )
+        await expectFeatureUsed(
+            `const b = 0o7`,
+            'es6-number'
+        )
+    })
+
+    test('let', async () => {
+        await expectFeatureUsed(
+            `let a = 1`,
+            'let'
+        )
+        await expectFeatureNotUsed(
+            `const a = 1`,
+            'let'
+        )
+    })
+
+    test('rest-parameters', async () => {
+        await expectFeatureUsed(
+            `function f(a, ...args) {}`,
+            'rest-parameters'
+        )
+        await expectFeatureNotUsed(
+            `function f(a, b) {}`,
+            'rest-parameters'
+        )
+    })
+})
+
+
+
+
+describe('JS APIs', () => {
+    test('async-iterations-and-generators', async () => {
+        await expectFeatureUsed(
             `const asyncIterable = {
                 [Symbol.asyncIterator]() {
                     return {
@@ -92,85 +188,20 @@ describe('BabelAnalyzer', () => {
             };`,
             'async-iterations-and-generators'
         )
-        await expectCodeUsesFeature(
-            `(async function() {
-                for await (let num of asyncIterable) {
-                    console.log(num);
-                }
-            })();`,
-            'async-iterations-and-generators'
-        )
-    })
-
-    test('const', async () => {
-        await expectCodeUsesFeature(
-            `const a = 1`,
-            'const'
-        )
-    })
-
-    test('es6-class', async () => {
-        await expectCodeUsesFeature(
-            `class A {}`,
-            'es6-class'
-        )
-        await expectCodeUsesFeature(
-            `const a = class {}`,
-            'es6-class'
-        )
-    })
-
-    test('es6-generators', async () => {
-        await expectCodeUsesFeature(
-            `function* generator() {
-                let i = 0;
-                while (i < 3) {
-                    yield i++;
-                }
-            }`,
-            'es6-generators'
-        )
-        await expectCodeUsesFeature(
-            `const asyncGenerator2 = function* () {
-                let i = 0;
-                while (i < 3) {
-                    yield i++;
-                }
-            }`,
-            'es6-generators'
-        )
     })
 
     test('es6-module-dynamic-import', async () => {
-        await expectCodeUsesFeature(
+        await expectFeatureUsed(
             `const lib = import('lib')`,
             'es6-module-dynamic-import'
         )
     })
 
-    test('es6-module', async () => {
-        await expectCodeUsesFeature(
-            `import def, {a} from 'a'`,
-            'es6-module'
-        )
-        await expectCodeUsesFeature(
-            `export default def`,
-            'es6-module'
-        )
-        await expectCodeUsesFeature(
-            `const a = 2
-            export {a}`,
-            'es6-module'
-        )
-    })
-
     test('es6-number', async () => {
         function codeUsesEs6Number(code: string): Promise<void> {
-            return expectCodeUsesFeature(code, 'es6-number')
+            return expectFeatureUsed(code, 'es6-number')
         }
 
-        await codeUsesEs6Number(`const a = 0b11`)
-        await codeUsesEs6Number(`const b = 0o7`)
         // Number
         await codeUsesEs6Number(`Number.EPSILON`)
         await codeUsesEs6Number(`Number.isFinite(Infinity)`)
@@ -201,7 +232,7 @@ describe('BabelAnalyzer', () => {
         await codeUsesEs6Number(`Math.hypot`)
 
         // Non-global Number
-        await expectNotCodeUsesFeature(
+        await expectFeatureNotUsed(
             `const Number = {
                 isFinite() {},
                 isNaN() {},
@@ -220,10 +251,10 @@ describe('BabelAnalyzer', () => {
             Number.isSafeInteger(18)
             Number.MIN_SAFE_INTEGER
             Number.MAX_SAFE_INTEGER`,
-            ''
+            'es6-number'
         )
         // Non-global Math
-        await expectNotCodeUsesFeature(
+        await expectFeatureNotUsed(
             `const Math = {
                 sign() {},
                 trunc() {},
@@ -261,46 +292,36 @@ describe('BabelAnalyzer', () => {
             Math.acosh(1)
             Math.atanh(1)
             Math.hypot(1)`,
-            ''
+            'es6-number'
         )
     })
 
     test('fetch', async () => {
-        await expectCodeUsesFeature(
+        await expectFeatureUsed(
             `fetch('http://my.domain.com')`,
             'fetch'
         )
-        await expectCodeUsesFeature(
+        await expectFeatureUsed(
             `const get = fetch
             get('http://my.domain.com')`,
             'fetch'
         )
-        await expectNotCodeUsesFeature(
+        await expectFeatureNotUsed(
             `const fetch = () => {}
             fetch('http://my.domain.com')`,
             'fetch'
         )
     })
+})
 
-    test('let', async () => {
-        await expectCodeUsesFeature(
-            `let a = 1`,
-            'let'
-        )
-        await expectNotCodeUsesFeature(
-            `const a = 1`,
-            'let'
-        )
-    })
 
-    test('rest-parameters', async () => {
-        await expectCodeUsesFeature(
-            `function f(a, ...args) {}`,
-            'rest-parameters'
-        )
-        await expectNotCodeUsesFeature(
-            `function f(a, b) {}`,
-            'rest-parameters'
+
+
+describe('media', () => {
+    test('aac', async () => {
+        await expectFeatureUsed(
+            `const jsx = <audio controls src="/media/sound.aac"></audio>`,
+            'aac'
         )
     })
 })
