@@ -173,12 +173,12 @@ describe('BabelAnalyzer', () => {
         await codeUsesEs6Number(`const b = 0o7`)
         // Number
         await codeUsesEs6Number(`Number.EPSILON`)
-        await codeUsesEs6Number(`Number.isFinite`)
-        await codeUsesEs6Number(`Number.isNaN`)
+        await codeUsesEs6Number(`Number.isFinite(Infinity)`)
+        await codeUsesEs6Number(`Number.isNaN(NaN)`)
         await codeUsesEs6Number(`Number.parseFloat('1.23')`)
         await codeUsesEs6Number(`Number.parseInt('11')`)
-        await codeUsesEs6Number(`Number.isInteger`)
-        await codeUsesEs6Number(`Number.isSafeInteger`)
+        await codeUsesEs6Number(`Number.isInteger(-17)`)
+        await codeUsesEs6Number(`Number.isSafeInteger(18)`)
         await codeUsesEs6Number(`Number.MIN_SAFE_INTEGER`)
         await codeUsesEs6Number(`Number.MAX_SAFE_INTEGER`)
         // Math
@@ -199,6 +199,70 @@ describe('BabelAnalyzer', () => {
         await codeUsesEs6Number(`Math.acosh`)
         await codeUsesEs6Number(`Math.atanh`)
         await codeUsesEs6Number(`Math.hypot`)
+
+        // Non-global Number
+        await expectNotCodeUsesFeature(
+            `const Number = {
+                isFinite() {},
+                isNaN() {},
+                parseFloat() {},
+                parseInt() {},
+                isInteger() {},
+                isSafeInteger() {},
+            }
+
+            Number.EPSILON
+            Number.isFinite(Infinity)
+            Number.isNaN(NaN)
+            Number.parseFloat('1.23')
+            Number.parseInt('11')
+            Number.isInteger(-17)
+            Number.isSafeInteger(18)
+            Number.MIN_SAFE_INTEGER
+            Number.MAX_SAFE_INTEGER`,
+            ''
+        )
+        // Non-global Math
+        await expectNotCodeUsesFeature(
+            `const Math = {
+                sign() {},
+                trunc() {},
+                cbrt() {},
+                expm1() {},
+                log1p() {},
+                log2() {},
+                log10() {},
+                fround() {},
+                imul() {},
+                clz32() {},
+                sinh() {},
+                cosh() {},
+                tanh() {},
+                asinh() {},
+                acosh() {},
+                atanh() {},
+                hypot() {},
+            }
+
+            Math.sign(0)
+            Math.trunc(3.1)
+            Math.cbrt(8)
+            Math.expm1(1e-10)
+            Math.log1p(1e-16)
+            Math.log2(8)
+            Math.log10(100)
+            Math.fround(1)
+            Math.imul(1, 2)
+            Math.clz32(2)
+            Math.sinh(1)
+            Math.cosh(1)
+            Math.tanh(1)
+            Math.asinh(1)
+            Math.acosh(1)
+            Math.atanh(1)
+            Math.hypot(1)`,
+            ''
+        )
     })
 
     test('fetch', async () => {
