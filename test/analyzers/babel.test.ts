@@ -287,5 +287,20 @@ describe('BabelAnalyzer', () => {
             `let a = 1`,
             'let'
         )
+        await expectNotCodeUsesFeature(
+            `const a = 1`,
+            'let'
+        )
+    })
+
+    test('rest-parameters', async () => {
+        await expectCodeUsesFeature(
+            `function f(a, ...args) {}`,
+            'rest-parameters'
+        )
+        await expectNotCodeUsesFeature(
+            `function f(a, b) {}`,
+            'rest-parameters'
+        )
     })
 })
