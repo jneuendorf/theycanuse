@@ -1,5 +1,5 @@
 declare module "enum-nck" {
-    export default function<T>(arr: T[], k: number): T[][]
+    export default function <T>(arr: T[], k: number): T[][]
 }
 
 declare module "jaro-winkler" {

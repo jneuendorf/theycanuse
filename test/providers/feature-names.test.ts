@@ -29,8 +29,8 @@ test('normalized and distinguishable feature names across providers', async () =
     )
     const featureNames = (
         datas
-        .map(data => Object.keys(data))
-        .flat()
+            .map(data => Object.keys(data))
+            .flat()
     )
     const uniqueFeatureNames = [...new Set(featureNames)]
     // console.log(featureNames)
@@ -38,19 +38,19 @@ test('normalized and distinguishable feature names across providers', async () =
     // console.log(combinations)
     const indistinguishableFeatureNames = (
         combinations
-        .map(([feature1, feature2]): [string, string, number] => [
-            feature1,
-            feature2,
-            jaro(feature1, feature2),
-        ])
-        .filter(([,, similarity]) => similarity > 0.95)
-        // Make an exception on some features.
-        .filter(([feature1, feature2]: [string, string, number]) => {
-            return !ALLOWED_SIMILAR_FEATURES.some(re => (
-                re.test(feature1)
-                || re.test(feature2)
-            ))
-        })
+            .map(([feature1, feature2]): [string, string, number] => [
+                feature1,
+                feature2,
+                jaro(feature1, feature2),
+            ])
+            .filter(([, , similarity]) => similarity > 0.95)
+            // Make an exception on some features.
+            .filter(([feature1, feature2]: [string, string, number]) => {
+                return !ALLOWED_SIMILAR_FEATURES.some(re => (
+                    re.test(feature1)
+                    || re.test(feature2)
+                ))
+            })
     )
     console.log(indistinguishableFeatureNames)
 })

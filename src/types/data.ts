@@ -23,7 +23,7 @@ export type BrowserSupport = {
 export type BrowserSupportEntries = BrowserSupportEntry[]
 export type BrowserSupportEntry = [string, VersionRanges]
 export type VersionRanges = VersionRange[]
-export type VersionRange = {versions: string, notes?: string}
+export type VersionRange = { versions: string, notes?: string }
 
 // See `StatusBlock` in node_modules/mdn-browser-compat-data/types.d.ts
 export type Status = {

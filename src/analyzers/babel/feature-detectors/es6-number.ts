@@ -5,7 +5,7 @@ import { isAnyMemberOfGlobal } from '../utils'
 
 
 interface NumericLiteral extends t.NumericLiteral {
-    extra: {rawValue: number, raw: string}
+    extra: { rawValue: number, raw: string }
 }
 function isNumericLiteral(node: object | null | undefined, opts?: object | null): node is NumericLiteral {
     return t.isNumericLiteral(node, opts)

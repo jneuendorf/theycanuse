@@ -15,7 +15,7 @@ export type BabelDetector = Detector<BabelNodeMetaData>
 
 // Type assertion
 const typedFeatureDetectors = (
-    featureDetectors as {[feature: string]: BabelDetector}
+    featureDetectors as { [feature: string]: BabelDetector }
 )
 
 

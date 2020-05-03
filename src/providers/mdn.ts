@@ -34,7 +34,7 @@ import { unknownStatus, parsedSemVer } from './util'
 //     | 'xpath'
 //     | 'xslt'
 // )
-type Features = {[feature: string]: CompatStatement}
+type Features = { [feature: string]: CompatStatement }
 
 
 function browserHasSupportStatement(
@@ -59,37 +59,37 @@ export class MdnProvider extends AbstractProvider {
         // console.log(features['trailing-commas'].support)
         const entries = (
             Object.entries(features)
-            .map(([feature, compat]): [string, FeatureData] => {
-                console.log(feature)
-                const support: BrowserSupport = Object.fromEntries(
-                    Object.entries(compat.support)
-                    .filter(browserHasSupportStatement)
-                    .map(([browser, support]) => [
-                        browser,
-                        this.getVersionRanges(support),
-                    ])
-                )
-                const status: Status = (
-                    compat.status
-                    ? {
-                        deprecated: compat.status.deprecated,
-                        experimental: compat.status.experimental,
-                        standardTrack: compat.status.standard_track,
-                    }
-                    : unknownStatus()
-                )
-                const urls = (
-                    compat.mdn_url
-                    ? [compat.mdn_url]
-                    : []
-                )
+                .map(([feature, compat]): [string, FeatureData] => {
+                    console.log(feature)
+                    const support: BrowserSupport = Object.fromEntries(
+                        Object.entries(compat.support)
+                            .filter(browserHasSupportStatement)
+                            .map(([browser, support]) => [
+                                browser,
+                                this.getVersionRanges(support),
+                            ])
+                    )
+                    const status: Status = (
+                        compat.status
+                            ? {
+                                deprecated: compat.status.deprecated,
+                                experimental: compat.status.experimental,
+                                standardTrack: compat.status.standard_track,
+                            }
+                            : unknownStatus()
+                    )
+                    const urls = (
+                        compat.mdn_url
+                            ? [compat.mdn_url]
+                            : []
+                    )
 
-                return [feature, {
-                    support,
-                    status,
-                    urls,
-                }]
-            })
+                    return [feature, {
+                        support,
+                        status,
+                        urls,
+                    }]
+                })
         )
         const normalizedData: NormalizedData = Object.fromEntries(entries)
         return normalizedData

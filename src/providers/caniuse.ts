@@ -19,7 +19,7 @@ import { isSupported } from '../support-types'
 
 type CaniuseFeatureData = {
     stats: Stats,
-    links: {url: string, title: string}[],
+    links: { url: string, title: string }[],
 }
 type Stats = { [key: string]: Versions }
 type Versions = { [key: string]: string }
@@ -50,35 +50,35 @@ export class CaniuseProvider extends AbstractProvider {
         )
         return Object.fromEntries(
             caniuseData
-            .map(([feature, data]): [string, FeatureData] => {
-                const support: BrowserSupport = Object.fromEntries(
-                    Object.entries(data.stats)
-                    .map(entry => this.getBrowserSupportEntry(...entry))
-                )
-                const featureData: FeatureData = {
-                    support,
-                    status: unknownStatus(),
-                    urls: data.links.map(({ url }) => url)
-                }
-                return [feature, featureData]
-            })
+                .map(([feature, data]): [string, FeatureData] => {
+                    const support: BrowserSupport = Object.fromEntries(
+                        Object.entries(data.stats)
+                            .map(entry => this.getBrowserSupportEntry(...entry))
+                    )
+                    const featureData: FeatureData = {
+                        support,
+                        status: unknownStatus(),
+                        urls: data.links.map(({ url }) => url)
+                    }
+                    return [feature, featureData]
+                })
         )
     }
 
     private getBrowserSupportEntry(browser: string, versions: Versions): BrowserSupportEntry {
         const relevantVersions: [SemVer, string][] = (
             Object.entries(versions)
-            // Ignore some of caniuse's special version strings
-            .filter(([version]) => !this.SPECIAL_VERSIONS.has(version))
-            // Parse semantic version string and
-            // remove status annotations, e.g. 'a #1 => 'a'
-            .map(
-                ([version, support]): [SemVer, string] => {
-                    return [
-                        parsedSemVer(version),
-                        support.charAt(0),
-                    ]
-                })
+                // Ignore some of caniuse's special version strings
+                .filter(([version]) => !this.SPECIAL_VERSIONS.has(version))
+                // Parse semantic version string and
+                // remove status annotations, e.g. 'a #1 => 'a'
+                .map(
+                    ([version, support]): [SemVer, string] => {
+                        return [
+                            parsedSemVer(version),
+                            support.charAt(0),
+                        ]
+                    })
         )
         const sortedVersions = relevantVersions.sort(
             (
