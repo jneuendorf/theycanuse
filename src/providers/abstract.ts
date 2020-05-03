@@ -1,5 +1,6 @@
-import fs from 'fs-extra'
 import path from 'path'
+
+import fs from 'fs-extra'
 
 import { NormalizedData } from '../types/data'
 

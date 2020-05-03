@@ -1,89 +1,95 @@
 import path from 'path'
 
 import fs from 'fs-extra'
-import caniusePkg from 'caniuse-db/package.json'
+import { version } from 'caniuse-db/package.json'
 import { SemVer } from 'semver'
 import * as semver from 'semver'
 
 import {
     NormalizedData,
+    FeatureData,
     BrowserSupport,
-    BrowserSupportEntries,
     BrowserSupportEntry,
     VersionRanges,
 } from '../types/data'
 import { AbstractProvider } from './abstract'
+import { unknownStatus, parsedSemVer } from './util'
 import { isSupported } from '../support-types'
 
 
+type CaniuseFeatureData = {
+    stats: Stats,
+    links: {url: string, title: string}[],
+}
 type Stats = { [key: string]: Versions }
 type Versions = { [key: string]: string }
 
-
-function isParseableSemVer(
-    entry: [SemVer | null, string],
-): entry is [SemVer, string] {
-    return entry[0] instanceof SemVer
-}
 
 /*
 Loading the cache file takes approximately 1%
 compared to loading and processing 'caniuse-db'.
 */
 export class CaniuseProvider extends AbstractProvider {
+    private SPECIAL_VERSIONS = new Set(['TP', 'all'])
+
     constructor() {
-        super('caniuse', caniusePkg.version)
+        super('caniuse', version)
     }
 
     async normalizedData(): Promise<NormalizedData> {
         const jsonFiles = await fs.readdir('node_modules/caniuse-db/features-json')
         const caniuseData = await Promise.all(
-            jsonFiles.map(async (jsonFile): Promise<[string, Stats]> => {
-                const data: {stats: Stats} = await import(`caniuse-db/features-json/${jsonFile}`)
-                return [path.basename(jsonFile, '.json'), data.stats]
+            jsonFiles.map(
+                async (jsonFile): Promise<[string, CaniuseFeatureData]> => {
+                    const data: CaniuseFeatureData = await import(
+                        `caniuse-db/features-json/${jsonFile}`
+                    )
+                    return [path.basename(jsonFile, '.json'), data]
+                }
+            )
+        )
+        return Object.fromEntries(
+            caniuseData
+            .map(([feature, data]): [string, FeatureData] => {
+                const support: BrowserSupport = Object.fromEntries(
+                    Object.entries(data.stats)
+                    .map(entry => this.getBrowserSupportEntry(...entry))
+                )
+                const featureData: FeatureData = {
+                    support,
+                    status: unknownStatus(),
+                    urls: data.links.map(({ url }) => url)
+                }
+                return [feature, featureData]
             })
         )
-        // const caniuse = await import('caniuse-db/data.json')
-        const data = (
-            // Object.entries(caniuse.data)
-            caniuseData
-                .map(([feature, stats]): [string, BrowserSupport] => {
-                    // const stats: Stats = data.stats
-                    const browserSupportEntries: BrowserSupportEntries = (
-                        Object.entries(stats)
-                            .map((
-                                [browser, versions]: [string, Versions]
-                            ): BrowserSupportEntry => {
-                                const relevantVersions: Array<[SemVer, string]> = (
-                                    Object.entries(versions)
-                                        // Parse semantic version string and
-                                        // remove status annotations, e.g. 'a #1 => 'a'
-                                        .map(
-                                            ([version, support]): [SemVer | null, string] => [
-                                                semver.coerce(version),
-                                                support.charAt(0),
-                                            ])
-                                        // Filter unparseable versions.
-                                        .filter(isParseableSemVer)
-                                )
-                                const sortedVersions = relevantVersions.sort(
-                                    (
-                                        [v1]: [SemVer, string],
-                                        [v2]: [SemVer, string],
-                                    ) => this.compareVersions(v1, v2),
-                                )
+    }
 
-                                return [
-                                    browser,
-                                    this.getSupportingVersionRanges(sortedVersions),
-                                ]
-                            })
-                    )
-
-                    return [feature, Object.fromEntries(browserSupportEntries)]
+    private getBrowserSupportEntry(browser: string, versions: Versions): BrowserSupportEntry {
+        const relevantVersions: [SemVer, string][] = (
+            Object.entries(versions)
+            // Ignore some of caniuse's special version strings
+            .filter(([version]) => !this.SPECIAL_VERSIONS.has(version))
+            // Parse semantic version string and
+            // remove status annotations, e.g. 'a #1 => 'a'
+            .map(
+                ([version, support]): [SemVer, string] => {
+                    return [
+                        parsedSemVer(version),
+                        support.charAt(0),
+                    ]
                 })
         )
-        return Object.fromEntries(data)
+        const sortedVersions = relevantVersions.sort(
+            (
+                [v1]: [SemVer, string],
+                [v2]: [SemVer, string],
+            ) => this.compareVersions(v1, v2),
+        )
+        return [
+            browser,
+            this.getSupportingVersionRanges(sortedVersions),
+        ]
     }
 
     private compareVersions(v1: SemVer, v2: SemVer): number {
@@ -97,7 +103,7 @@ export class CaniuseProvider extends AbstractProvider {
     }
 
     private getSupportingVersionRanges(
-        sortedVersions: Array<[SemVer, string]>,
+        sortedVersions: [SemVer, string][],
     ): VersionRanges {
         const supportingVersionRanges: VersionRanges = []
         const n = sortedVersions.length
